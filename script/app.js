@@ -9,23 +9,36 @@ const calculator = {
   waitingForSecondOperand: false,
   equal: false,
   operator: null,
+  result: null,
 };
 
 const inputDigit = (number) => {
   if (calculator.waitingForSecondOperand === true) {
-    displayResult.value = "";
+    if (calculator.result !== null) {
+      calculator.firstNumber = calculator.result;
+      calculator.secondNumber = null;
+      calculator.displayValue = "0";
+    }
+    calculator.displayValue = "0";
     calculator.secondNumber === null
       ? (calculator.secondNumber = number)
       : (calculator.secondNumber += number);
 
-    displayResult.value = calculator.secondNumber;
+    calculator.displayValue = calculator.secondNumber;
   } else if (calculator.firstNumber === null) {
-    calculator.displayValue = number;
-    displayResult.value = calculator.displayValue;
+    calculator.firstNumber = number;
+    calculator.displayValue = calculator.firstNumber;
   } else {
-    calculator.displayValue += number;
-    displayResult.value = calculator.displayValue;
+    calculator.firstNumber += number;
+    calculator.displayValue = calculator.firstNumber;
   }
+
+  console.log(
+    "first",
+    calculator.firstNumber,
+    "secound",
+    calculator.secondNumber
+  );
 };
 
 function inputDecimal() {
@@ -48,62 +61,62 @@ const positiveNegative = () => {
 
 const operatorVal = (operatorValue) => {
   if (operatorValue === "numberPow2") {
-    let result = parseFloat(Math.pow(displayResult.value, 2));
-    outPutOperate.innerHTML = `sqr(${displayResult.value}) `;
-    displayResult.value = result;
+    calculator.result = parseFloat(Math.pow(calculator.displayValue, 2));
+    outPutOperate.innerHTML = `sqr(${calculator.displayValue}) `;
   } else if (operatorValue === "numberPow3") {
-    let result = parseFloat(Math.pow(displayResult.value, 3));
-    outPutOperate.innerHTML = `sqr(${displayResult.value}) `;
-    displayResult.value = result;
+    calculator.result = parseFloat(Math.pow(calculator.displayValue, 3));
+    outPutOperate.innerHTML = `sqr(${calculator.displayValue}) `;
   } else if (operatorValue === "sqrt") {
-    console.log("hello");
-    let result = parseFloat(Math.sqrt(displayResult.value));
-    outPutOperate.innerHTML = `√(${displayResult.value})`;
-    displayResult.value = result;
+    calculator.result = parseFloat(Math.sqrt(calculator.displayValue));
+    outPutOperate.innerHTML = `√(${calculator.displayValue})`;
   } else if (operatorValue === "1/x") {
-    let result = parseFloat(1 / displayResult.value);
-    outPutOperate.innerHTML = `1/(${displayResult.value})`;
-    displayResult.value = result;
+    calculator.result = parseFloat(1 / calculator.displayValue);
+    outPutOperate.innerHTML = `1/(${calculator.displayValue})`;
   } else {
     calculator.operator = operatorValue;
-    outPutOperate.innerHTML = ` ${calculator.displayValue} ${calculator.operator} `;
+    if (calculator.result !== null) {
+      calculator.firstNumber = calculator.result;
+    }
+    outPutOperate.innerHTML = ` ${calculator.firstNumber} ${calculator.operator} `;
   }
-
-  calculator.firstNumber = displayResult.value;
   calculator.waitingForSecondOperand = true;
+  calculator.displayValue = calculator.result;
+  updateDisplay();
 };
 
 const resultOperator = () => {
   outPutOperate.innerHTML += `${calculator.secondNumber} =`;
-  displayResult.value = "";
+
   if (calculator.operator === "+") {
-    let result =
-      parseFloat(calculator.displayValue) + parseFloat(calculator.secondNumber);
-    displayResult.value = result;
+    calculator.result =
+      parseFloat(calculator.firstNumber) + parseFloat(calculator.secondNumber);
   } else if (calculator.operator === "-") {
-    let result =
-      parseFloat(calculator.displayValue) - parseFloat(calculator.secondNumber);
-    displayResult.value = result;
+    calculator.result =
+      parseFloat(calculator.firstNumber) - parseFloat(calculator.secondNumber);
   } else if (calculator.operator === "×") {
-    let result =
-      parseFloat(calculator.displayValue) * parseFloat(calculator.secondNumber);
-    displayResult.value = result;
+    calculator.result =
+      parseFloat(calculator.firstNumber) * parseFloat(calculator.secondNumber);
   } else if (calculator.operator === "÷") {
-    let result =
-      parseFloat(calculator.displayValue) / parseFloat(calculator.secondNumber);
-    displayResult.value = result;
+    calculator.result =
+      parseFloat(calculator.firstNumber) / parseFloat(calculator.secondNumber);
   }
+  calculator.displayValue = calculator.result;
+  updateDisplay();
 };
 
 function updateDisplay() {
-  displayResult.value = "";
+  // if (calculator.displayValue === "0" || calculator.displayValue === "") {
+  //   displayResult.value = "0";
+  // }
+  displayResult.value = "0";
   displayResult.value = calculator.displayValue;
 }
+updateDisplay();
 
 btnKeys.addEventListener("click", (e) => {
   if (e.target.classList.contains("data-number")) {
     inputDigit(e.target.value);
-    // updateDisplay();
+    updateDisplay();
   }
 
   if (e.target.classList.contains("decimal")) {
@@ -114,7 +127,7 @@ btnKeys.addEventListener("click", (e) => {
   if (e.target.classList.contains("operator")) {
     console.log(e.target.value);
     operatorVal(e.target.value);
-    // updateDisplay();
+    updateDisplay();
   }
 
   if (e.target.classList.contains("result")) {
