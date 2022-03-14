@@ -5,6 +5,7 @@ const btnKeys = document.querySelector(".calculator-keys");
 const historyMemory = document.querySelector(".sidebar");
 const historyView = document.querySelector(".history-calculation");
 const memoryView = document.querySelector(".memory-calculation");
+const clearAllListMemory = document.querySelector(".trash-bin");
 let id = 0;
 let memoryList = [];
 let historyList = [];
@@ -19,17 +20,14 @@ const calculator = {
 };
 
 const inputDigit = (number) => {
+  if (calculator.result !== null) {
+    clearAll();
+  }
   if (calculator.waitingForSecondOperand === true) {
-    if (calculator.result !== null) {
-      calculator.firstNumber = calculator.result;
-      // calculator.secondNumber = null;
-      calculator.displayValue = "0";
-    }
     calculator.displayValue = "0";
     calculator.secondNumber === null
       ? (calculator.secondNumber = number)
       : (calculator.secondNumber += number);
-    console.log("lez-mez");
 
     calculator.displayValue = calculator.secondNumber;
   } else if (calculator.firstNumber === null) {
@@ -39,42 +37,72 @@ const inputDigit = (number) => {
     calculator.firstNumber += number;
     calculator.displayValue = calculator.firstNumber;
   }
-
-  console.log(
-    "first",
-    calculator.firstNumber,
-    "secound",
-    calculator.secondNumber
-  );
 };
 
 const deleteLastCharacter = () => {
-  displayResult.value = displayResult.value.substring(
+  debugger;
+  displayResult.innerHTML = displayResult.innerHTML.substring(
     0,
-    displayResult.value.length - 1
+    displayResult.innerHTML.length - 1
   );
-  calculator.firstNumber = displayResult.value;
-  calculator.displayValue = displayResult.value;
+  // if (calculator.result !== null) {
+  // } else
+  if (calculator.secondNumber !== null) {
+    calculator.secondNumber = displayResult.innerHTML;
+  } else {
+    calculator.firstNumber = displayResult.innerHTML;
+  }
 
-  // displayResult.val = displayResult.val().slice(0, -1);
+  calculator.displayValue = displayResult.innerHTML;
+
   updateDisplay();
 };
 
 function inputDecimal() {
-  if (!displayResult.value.includes(".")) {
-    displayResult.value += ".";
+  if (!calculator.displayValue.includes(".")) {
+    if (calculator.firstNumber === null) {
+      calculator.firstNumber = "0.";
+      calculator.displayValue = calculator.firstNumber;
+    } else if (
+      calculator.secondNumber === null &&
+      calculator.waitingForSecondOperand === true
+    ) {
+      calculator.secondNumber = "0.";
+      calculator.displayValue = calculator.secondNumber;
+    } else {
+      if (
+        calculator.secondNumber === null &&
+        calculator.waitingForSecondOperand === false
+      ) {
+        calculator.firstNumber += ".";
+        calculator.displayValue = calculator.firstNumber;
+      } else {
+        calculator.secondNumber += ".";
+        calculator.displayValue = calculator.secondNumber;
+      }
+    }
   }
+
+  updateDisplay();
 }
 
 const positiveNegative = () => {
-  if (displayResult.value.includes("-")) {
-    let digit = String(displayResult.value);
-    displayResult.value = digit.replace("-", "");
-
-    console.log(aminKoni, "positive");
+  debugger;
+  calculator.displayValue = String(calculator.displayValue);
+  if (calculator.displayValue.includes("-")) {
+    // let digit = String(displayResult.innerHTML);
+    calculator.displayValue = calculator.displayValue.replace("-", "");
+    calculator.firstNumber;
   } else {
-    displayResult.value += "-";
+    calculator.displayValue = "-" + calculator.displayValue;
   }
+  if (
+    calculator.secondNumber !== null &&
+    calculator.waitingForSecondOperand === true
+  ) {
+    calculator.secondNumber = parseFloat(calculator.displayValue);
+  }
+  updateDisplay();
 };
 
 const operatorVal = (operatorValue) => {
@@ -93,13 +121,15 @@ const operatorVal = (operatorValue) => {
   } else {
     calculator.operator = operatorValue;
     if (calculator.result !== null) {
+      calculator.result = calculator.displayValue;
       calculator.firstNumber = calculator.result;
+      calculator.result = null;
     } else {
-      calculator.displayValue = calculator.firstNumber;
+      calculator.firstNumber = calculator.displayValue;
     }
     outPutOperate.innerHTML = ` ${calculator.firstNumber} ${calculator.operator} `;
   }
-  calculator.waitingForSecondOperand = true;
+  calculator.waitingForSecondOperand = true; // اینو فردا درست کن
   if (calculator.result !== null) {
     calculator.displayValue = calculator.result;
   }
@@ -107,7 +137,12 @@ const operatorVal = (operatorValue) => {
 };
 
 const resultOperator = () => {
-  outPutOperate.innerHTML += `${calculator.secondNumber} =`;
+  if (calculator.secondNumber === null) {
+    debugger;
+    outPutOperate.innerHTML += "=";
+  } else {
+    outPutOperate.innerHTML += `${calculator.secondNumber} =`;
+  }
 
   if (calculator.operator === "+") {
     calculator.result =
@@ -131,14 +166,25 @@ const resultOperator = () => {
   updateDisplay();
 };
 
+function clearAll() {
+  calculator.displayValue = "0";
+  calculator.firstNumber = null;
+  calculator.secondNumber = null;
+  calculator.waitingForSecondOperand = false;
+  calculator.equal = false;
+  calculator.operator = null;
+  calculator.result = null;
+  outPutOperate.innerHTML = "";
+  updateDisplay();
+}
 function updateHistoryView() {
   historyView.innerHTML = "";
 
   historyList.forEach((list) => {
     console.log(list);
-    const lirrrr = document.createElement("li");
-    lirrrr.innerHTML = `${list.operationHistory} <br> ${list.resultHistory}`;
-    historyView.prepend(lirrrr);
+    const li = document.createElement("li");
+    li.innerHTML = `${list.operationHistory} <br> ${list.resultHistory}`;
+    historyView.prepend(li);
   });
   console.log(historyView);
 }
@@ -156,12 +202,21 @@ function updateHistory() {
 
 function updateDisplay() {
   // if (calculator.displayValue === "0" || calculator.displayValue === "") {
-  //   displayResult.value = "0";
+  //   displayResult.innerHTML = "0";
   // }
-  displayResult.value = "0";
-  displayResult.value = calculator.displayValue;
+  displayResult.innerHTML = "0";
+  displayResult.innerHTML = calculator.displayValue;
 }
 updateDisplay();
+
+clearAllListMemory.addEventListener("click", () => {
+  if ((historyView.style.display = "block")) {
+    historyList = [];
+    updateHistoryView();
+  } else {
+    memoryList = [];
+  }
+});
 
 btnKeys.addEventListener("click", (e) => {
   if (e.target.classList.contains("data-number")) {
@@ -192,10 +247,12 @@ btnKeys.addEventListener("click", (e) => {
 
   if (e.target.classList.contains("clear-result")) {
     console.log(e.target.value);
+    clearAll();
   }
 
   if (e.target.classList.contains("clear-all")) {
     console.log(e.target.value);
+    clearAll();
   }
 
   if (e.target.classList.contains("delete-number")) {
@@ -207,15 +264,17 @@ btnKeys.addEventListener("click", (e) => {
 historyMemory.addEventListener("click", (e) => {
   console.log("pashmak");
   if (e.target.classList.contains("item1")) {
+    if (historyList === []) {
+      historyView.textContent = "There's no history yet";
+    }
     historyView.style.display = "block";
-    historyView.textContent = "There's no history yet";
+
     memoryView.style.display = "none";
-    console.log("karim");
   }
 
   if (e.target.classList.contains("item2")) {
     memoryView.style.display = "block";
-    memoryView.textContent = "reeeeeeeeeeeeeedi";
+    memoryView.textContent = "There's no memory yet";
     historyView.style.display = "none";
   }
 });

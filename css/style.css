@@ -113,9 +113,9 @@ body {
 }
 /*main row2 */
 .row2 {
-  direction: rtl;
+  /* direction: rtl; */
 }
-.row2 input {
+.row2 .calculator-screen {
   border: none;
   background-color: inherit;
   font-size: 40px;
@@ -124,7 +124,9 @@ body {
   margin: 5px;
   font-weight: bold;
   outline: none;
-  direction: rtl;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .data-calculation {
@@ -141,7 +143,7 @@ body {
 }
 
 .row3 div {
-  cursor: context-menu;
+  cursor: pointer;
   text-align: center;
   display: flex;
   justify-content: center;
@@ -389,4 +391,18 @@ body {
   .row3 .m {
     display: none;
   }
+}
+
+.trash-bin {
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  font-size: 22px;
+  border: none;
+  background-color: inherit;
+  cursor: pointer;
+}
+
+.trash-bin:hover {
+  background-color: lightgray;
 }
