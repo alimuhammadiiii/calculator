@@ -6,6 +6,10 @@ const historyMemory = document.querySelector(".sidebar");
 const historyView = document.querySelector(".history-calculation");
 const memoryView = document.querySelector(".memory-calculation");
 const clearAllListMemory = document.querySelector(".trash-bin");
+const btnMemory = document.querySelector(".row3");
+const historyText = document.querySelector(".item1");
+const memoryText = document.querySelector(".item2");
+console.log(historyText, memoryText);
 let id = 0;
 let memoryList = [];
 let historyList = [];
@@ -40,7 +44,7 @@ const inputDigit = (number) => {
 };
 
 const deleteLastCharacter = () => {
-  debugger;
+  // debugger;
   displayResult.innerHTML = displayResult.innerHTML.substring(
     0,
     displayResult.innerHTML.length - 1
@@ -177,16 +181,19 @@ function clearAll() {
   outPutOperate.innerHTML = "";
   updateDisplay();
 }
+
 function updateHistoryView() {
   historyView.innerHTML = "";
-
-  historyList.forEach((list) => {
-    console.log(list);
-    const li = document.createElement("li");
-    li.innerHTML = `${list.operationHistory} <br> ${list.resultHistory}`;
-    historyView.prepend(li);
-  });
-  console.log(historyView);
+  if (historyList.length === 0) {
+    historyView.innerHTML = "there's no history yet";
+  } else {
+    historyList.forEach((list) => {
+      console.log(list);
+      const li = document.createElement("li");
+      li.innerHTML = `${list.operationHistory} <br> ${list.resultHistory}`;
+      historyView.prepend(li);
+    });
+  }
 }
 
 function updateHistory() {
@@ -200,6 +207,20 @@ function updateHistory() {
   updateHistoryView();
 }
 
+function updateMemory() {
+  memoryView.innerHTML = "";
+  if (memoryList.length === 0) {
+    memoryView.innerHTML = "there nothing save in memory";
+  } else {
+    memoryList.forEach((number) => {
+      const li = document.createElement("li");
+      li.innerHTML = number;
+      memoryView.prepend(li);
+      console.log("rez");
+    });
+  }
+}
+
 function updateDisplay() {
   // if (calculator.displayValue === "0" || calculator.displayValue === "") {
   //   displayResult.innerHTML = "0";
@@ -210,11 +231,14 @@ function updateDisplay() {
 updateDisplay();
 
 clearAllListMemory.addEventListener("click", () => {
-  if ((historyView.style.display = "block")) {
+  console.log(historyView.style.display);
+
+  if (historyView.style.display === "block" && historyList.length !== 0) {
     historyList = [];
     updateHistoryView();
   } else {
     memoryList = [];
+    updateMemory();
   }
 });
 
@@ -262,19 +286,52 @@ btnKeys.addEventListener("click", (e) => {
 });
 
 historyMemory.addEventListener("click", (e) => {
-  console.log("pashmak");
   if (e.target.classList.contains("item1")) {
-    if (historyList === []) {
-      historyView.textContent = "There's no history yet";
-    }
     historyView.style.display = "block";
-
     memoryView.style.display = "none";
+    memoryText.classList.remove("border-bottom");
+    historyText.classList.add("border-bottom");
   }
-
   if (e.target.classList.contains("item2")) {
     memoryView.style.display = "block";
-    memoryView.textContent = "There's no memory yet";
     historyView.style.display = "none";
+    historyText.classList.remove("border-bottom");
+    memoryText.classList.add("border-bottom");
+  }
+});
+
+btnMemory.addEventListener("click", (e) => {
+  if (e.target.classList.contains("ms")) {
+    memoryList.push(calculator.displayValue);
+    updateMemory();
+  }
+
+  if (e.target.classList.contains("m-")) {
+    let lastNumber = memoryList.pop(memoryList[memoryList.length - 1]);
+    lastNumber = lastNumber - calculator.displayValue;
+    console.log(lastNumber);
+    memoryList.push(lastNumber);
+    console.log(memoryList);
+    updateMemory();
+  }
+
+  if (e.target.classList.contains("m+")) {
+    let lastNumber = memoryList.pop(memoryList[memoryList.length - 1]);
+    lastNumber = parseFloat(lastNumber) + parseFloat(calculator.displayValue);
+    console.log(lastNumber);
+    memoryList.push(lastNumber);
+    console.log(memoryList);
+    updateMemory();
+  }
+  if (e.target.classList.contains("mc")) {
+    debugger;
+    memoryList = [];
+    updateMemory();
+  }
+
+  if (e.target.classList.contains("mr")) {
+    calculator.firstNumber = memoryList.pop(memoryList[memoryList.length - 1]);
+    calculator.displayValue = calculator.firstNumber;
+    updateDisplay();
   }
 });

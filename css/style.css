@@ -297,6 +297,9 @@ body {
   margin-right: 15px;
 }
 .sidebar .item1 {
+}
+
+.border-bottom {
   border-bottom: 3px solid rgb(248, 171, 6);
 }
 .sidebar .item3 {
@@ -309,6 +312,9 @@ body {
   direction: ltr;
 }
 
+.memory-calculation {
+  display: none;
+}
 @media screen and (max-width: 555px) {
   .calculator-keys {
     font-size: 25px;
@@ -405,4 +411,14 @@ body {
 
 .trash-bin:hover {
   background-color: lightgray;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
 }
