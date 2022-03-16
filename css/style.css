@@ -151,8 +151,13 @@ body {
   width: 90px;
 }
 
-.row3 .mc,
+/* .row3 .mc,
 .mr {
+  
+} */
+
+.disable-mc-mr {
+  pointer-events: none;
   color: rgb(180, 180, 180);
 }
 .wrap:hover {
@@ -296,8 +301,8 @@ body {
   padding: 5px;
   margin-right: 15px;
 }
-.sidebar .item1 {
-}
+/* .sidebar .item1 {
+} */
 
 .border-bottom {
   border-bottom: 3px solid rgb(248, 171, 6);

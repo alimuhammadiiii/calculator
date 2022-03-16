@@ -9,6 +9,8 @@ const clearAllListMemory = document.querySelector(".trash-bin");
 const btnMemory = document.querySelector(".row3");
 const historyText = document.querySelector(".item1");
 const memoryText = document.querySelector(".item2");
+const mc = document.querySelector(".mc");
+const mr = document.querySelector(".mr");
 console.log(historyText, memoryText);
 let id = 0;
 let memoryList = [];
@@ -109,7 +111,18 @@ const positiveNegative = () => {
   updateDisplay();
 };
 
+function percentNumber() {
+  let percentResult = (calculator.firstNumber * calculator.secondNumber) / 100;
+  calculator.secondNumber = percentResult;
+  console.log(percentResult);
+  calculator.displayValue = calculator.secondNumber;
+  // outPutOperate.innerHTML = ``
+  updateDisplay();
+}
+
 const operatorVal = (operatorValue) => {
+  calculator.secondNumber = null;
+
   if (operatorValue === "numberPow2") {
     calculator.result = parseFloat(Math.pow(calculator.displayValue, 2));
     outPutOperate.innerHTML = `sqr(${calculator.displayValue}) `;
@@ -141,28 +154,59 @@ const operatorVal = (operatorValue) => {
 };
 
 const resultOperator = () => {
-  if (calculator.secondNumber === null) {
+  // clearAllListMemory.style.display = "block";
+  if (calculator.result !== null) {
     debugger;
-    outPutOperate.innerHTML += "=";
+
+    calculator.firstNumber = String(calculator.result);
+
+    if (calculator.operator === "+") {
+      calculator.result =
+        parseFloat(calculator.firstNumber) +
+        parseFloat(calculator.secondNumber);
+    } else if (calculator.operator === "-") {
+      calculator.result =
+        parseFloat(calculator.firstNumber) -
+        parseFloat(calculator.secondNumber);
+    } else if (calculator.operator === "×") {
+      calculator.result =
+        parseFloat(calculator.firstNumber) *
+        parseFloat(calculator.secondNumber);
+    } else if (calculator.operator === "÷") {
+      calculator.result =
+        parseFloat(calculator.firstNumber) /
+        parseFloat(calculator.secondNumber);
+    }
+    // calculator.secondNumber = null;
   } else {
-    outPutOperate.innerHTML += `${calculator.secondNumber} =`;
+    if (calculator.secondNumber === null) {
+      outPutOperate.innerHTML += "=";
+    } else {
+      outPutOperate.innerHTML += `${calculator.secondNumber} =`;
+    }
+
+    if (calculator.operator === "+") {
+      calculator.result =
+        parseFloat(calculator.firstNumber) +
+        parseFloat(calculator.secondNumber);
+    } else if (calculator.operator === "-") {
+      calculator.result =
+        parseFloat(calculator.firstNumber) -
+        parseFloat(calculator.secondNumber);
+    } else if (calculator.operator === "×") {
+      calculator.result =
+        parseFloat(calculator.firstNumber) *
+        parseFloat(calculator.secondNumber);
+    } else if (calculator.operator === "÷") {
+      calculator.result =
+        parseFloat(calculator.firstNumber) /
+        parseFloat(calculator.secondNumber);
+    }
+    // calculator.secondNumber = null;
   }
 
-  if (calculator.operator === "+") {
-    calculator.result =
-      parseFloat(calculator.firstNumber) + parseFloat(calculator.secondNumber);
-  } else if (calculator.operator === "-") {
-    calculator.result =
-      parseFloat(calculator.firstNumber) - parseFloat(calculator.secondNumber);
-  } else if (calculator.operator === "×") {
-    calculator.result =
-      parseFloat(calculator.firstNumber) * parseFloat(calculator.secondNumber);
-  } else if (calculator.operator === "÷") {
-    calculator.result =
-      parseFloat(calculator.firstNumber) / parseFloat(calculator.secondNumber);
-  }
-  calculator.secondNumber = null;
   calculator.displayValue = calculator.result;
+  outPutOperate.innerHTML = `${calculator.firstNumber} ${calculator.operator}  ${calculator.secondNumber} =`;
 
   // historyList.push(calculator.result, outPutOperate.innerHTML);
   // console.log(historyList);
@@ -229,18 +273,19 @@ function updateDisplay() {
   displayResult.innerHTML = calculator.displayValue;
 }
 updateDisplay();
-
-clearAllListMemory.addEventListener("click", () => {
-  console.log(historyView.style.display);
-
+function clearHistoryMemory() {
   if (historyView.style.display === "block" && historyList.length !== 0) {
     historyList = [];
     updateHistoryView();
   } else {
+    mc.classList.add("disable-mc-mr");
+    mr.classList.add("disable-mc-mr");
     memoryList = [];
     updateMemory();
   }
-});
+  clearAllListMemory.style.display = "none";
+}
+clearAllListMemory.addEventListener("click", clearHistoryMemory);
 
 btnKeys.addEventListener("click", (e) => {
   if (e.target.classList.contains("data-number")) {
@@ -283,16 +328,31 @@ btnKeys.addEventListener("click", (e) => {
     console.log(e.target.value);
     deleteLastCharacter();
   }
+
+  if (e.target.classList.contains("percent")) {
+    console.log(e.target.value);
+    percentNumber();
+  }
 });
 
 historyMemory.addEventListener("click", (e) => {
   if (e.target.classList.contains("item1")) {
+    if (historyView !== "") {
+      clearAllListMemory.style.display = "block";
+    } else {
+      clearAllListMemory.style.display = "none";
+    }
     historyView.style.display = "block";
     memoryView.style.display = "none";
     memoryText.classList.remove("border-bottom");
     historyText.classList.add("border-bottom");
   }
   if (e.target.classList.contains("item2")) {
+    if (memoryView !== "") {
+      clearAllListMemory.style.display = "block";
+    } else {
+      clearAllListMemory.style.display = "none";
+    }
     memoryView.style.display = "block";
     historyView.style.display = "none";
     historyText.classList.remove("border-bottom");
@@ -302,11 +362,17 @@ historyMemory.addEventListener("click", (e) => {
 
 btnMemory.addEventListener("click", (e) => {
   if (e.target.classList.contains("ms")) {
+    mc.classList.remove("disable-mc-mr");
+    mr.classList.remove("disable-mc-mr");
+    clearAllListMemory.style.display = "block";
     memoryList.push(calculator.displayValue);
     updateMemory();
   }
 
   if (e.target.classList.contains("m-")) {
+    mc.classList.remove("disable-mc-mr");
+    mr.classList.remove("disable-mc-mr");
+    clearAllListMemory.style.display = "block";
     let lastNumber = memoryList.pop(memoryList[memoryList.length - 1]);
     lastNumber = lastNumber - calculator.displayValue;
     console.log(lastNumber);
@@ -316,6 +382,9 @@ btnMemory.addEventListener("click", (e) => {
   }
 
   if (e.target.classList.contains("m+")) {
+    mc.classList.remove("disable-mc-mr");
+    mr.classList.remove("disable-mc-mr");
+    clearAllListMemory.style.display = "block";
     let lastNumber = memoryList.pop(memoryList[memoryList.length - 1]);
     lastNumber = parseFloat(lastNumber) + parseFloat(calculator.displayValue);
     console.log(lastNumber);
@@ -324,9 +393,7 @@ btnMemory.addEventListener("click", (e) => {
     updateMemory();
   }
   if (e.target.classList.contains("mc")) {
-    debugger;
-    memoryList = [];
-    updateMemory();
+    clearHistoryMemory();
   }
 
   if (e.target.classList.contains("mr")) {
