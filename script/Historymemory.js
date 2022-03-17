@@ -77,11 +77,14 @@ btnMemory.addEventListener("click", (e) => {
     mc.classList.remove("disable-mc-mr");
     mr.classList.remove("disable-mc-mr");
     clearAllListMemory.style.display = "block";
-    let lastNumber = memoryList.pop(memoryList[memoryList.length - 1]);
-    lastNumber = lastNumber - calculator.displayValue;
-    console.log(lastNumber);
-    memoryList.push(lastNumber);
-    console.log(memoryList);
+    if (memoryList.length === 0) {
+      memoryList.push(-calculator.displayValue);
+    } else {
+      let lastNumber = memoryList.pop(memoryList[memoryList.length - 1]);
+      lastNumber = lastNumber - calculator.displayValue;
+      memoryList.push(lastNumber);
+    }
+
     updateMemory();
   }
 
@@ -89,11 +92,14 @@ btnMemory.addEventListener("click", (e) => {
     mc.classList.remove("disable-mc-mr");
     mr.classList.remove("disable-mc-mr");
     clearAllListMemory.style.display = "block";
-    let lastNumber = memoryList.pop(memoryList[memoryList.length - 1]);
-    lastNumber = parseFloat(lastNumber) + parseFloat(calculator.displayValue);
-    console.log(lastNumber);
-    memoryList.push(lastNumber);
-    console.log(memoryList);
+    if (memoryList.length === 0) {
+      memoryList.push(calculator.displayValue);
+    } else {
+      let lastNumber = memoryList.pop(memoryList[memoryList.length - 1]);
+      lastNumber = parseFloat(lastNumber) + parseFloat(calculator.displayValue);
+      memoryList.push(lastNumber);
+    }
+
     updateMemory();
   }
   if (e.target.classList.contains("mc")) {

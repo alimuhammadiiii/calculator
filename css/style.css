@@ -169,6 +169,9 @@ body {
   background-color: inherit;
 }
 /*calculator-keys */
+.calculator-keys button {
+  font-size: 22px;
+}
 .calculator-keys {
   cursor: context-menu;
   grid-area: calculator-keys;
